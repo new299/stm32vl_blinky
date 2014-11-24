@@ -8,6 +8,12 @@ LFLAGS  = -Tstm32.ld -nostartfiles
 CPFLAGS = -Obinary
 ODFLAGS = -S
 
+.PHONY: blinky
+
+all: blinky
+
+blinky: blinky.elf
+
 all: test
 
 clean:
@@ -21,9 +27,12 @@ test: blinky.elf
 blinky.elf: blinky.o stm32.ld 
 	@ echo "..linking"
 	$(LD) $(LFLAGS) -o blinky.elf blinky.o    
+	$(CP) $(CPFLAGS) blinky.elf blinky.bin
 
 blinky.o: blinky.c
 	@ echo ".compiling"
 	$(CC) $(CFLAGS) blinky.c
 
+burn: blinky
+	st-flash write blinky.bin 0x8000000
 
